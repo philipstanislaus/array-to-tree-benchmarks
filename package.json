@@ -4,10 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "rm -rf build && tsc && node build/benchmark.js",
+    "benchmark-small": "rm -rf build && tsc && node build/benchmark-small.js",
+    "benchmark-big": "rm -rf build && tsc && node build/benchmark-big.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Philip Stanislaus <stanislaus.philip@gmail.com>",
+  "repository": "philipstanislaus/array-to-tree-benchmarks",
   "license": "MIT",
   "dependencies": {
     "@types/benchmark": "^1.0.31",
