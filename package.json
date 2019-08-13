@@ -1,0 +1,21 @@
+{
+  "name": "array-to-tree-benchmarks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "rm -rf build && tsc && node build/benchmark.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/benchmark": "^1.0.31",
+    "@types/node": "^12.7.1",
+    "array-to-tree": "^3.3.0",
+    "benchmark": "^2.1.4",
+    "o-unflatten": "^1.1.0",
+    "performant-array-to-tree": "^1.1.4",
+    "un-flatten-tree": "^2.0.12"
+  }
+}
