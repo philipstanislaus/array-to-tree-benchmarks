@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "benchmark-small": "rm -rf build && tsc && node build/benchmark-small.js",
-    "benchmark-big": "rm -rf build && tsc && node build/benchmark-big.js",
+    "benchmark": "rm -rf build && tsc && node build/benchmark.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Philip Stanislaus <stanislaus.philip@gmail.com>",

@@ -1,71 +1,45 @@
 import Benchmark from 'benchmark'
-import { arrayToTree as performantArrayToTree } from 'performant-array-to-tree'
+import { arrayToTree as performantArrayToTree, Item } from 'performant-array-to-tree'
 import arrayToTree from 'array-to-tree'
 import { unflatten as unFlattenTree } from 'un-flatten-tree'
 import oUnflatten from 'o-unflatten'
 import { strict as assert } from 'assert'
 
-const input = [
-  { id: '96', parentId: '92', custom: 'a' },
-  { id: '97', parentId: '1', custom: 'very' },
-  { id: '98', parentId: '42', custom: 'interesting' },
-  { id: '99', parentId: null, custom: 'and' },
-  { id: '100', parentId: '4', custom: 'exciting' },
-  { id: '90', parentId: '42', custom: 'comparison' },
-  { id: '91', parentId: '4', custom: 'with' },
-  { id: '92', parentId: '31', custom: 'small' },
-  { id: '93', parentId: '92', custom: 'sample' },
-  { id: '94', parentId: '1', custom: '_' },
-  { id: '95', parentId: '31', custom: '__' },
-  { id: '4', parentId: null, custom: 'abc' },
-  { id: '31', parentId: '4', custom: '12' },
-  { id: '42', parentId: '1', custom: 'my' },
-  { id: '89', parentId: '1', custom: 'great' },
-  { id: '1941', parentId: '418', custom: 'de' },
-  { id: '1', parentId: null, custom: 'ZZZz' },
-  { id: '418', parentId: null, custom: 'ü' },
-]
+function randomElem<T>(arr: T[]): T {
+  const id = Math.floor(Math.random() * arr.length)
+  return arr[id]
+}
+
+function shuffle<T>(arr: T[]): T[] {
+  for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]]
+  }
+  return arr
+}
+
+function generateRandomInputs(count: number): Node[] {
+  const result: Node[] = [];
+
+  for (let id = 1; id <= count; id++) {
+    // have 10% of nodes at root, but at least 2
+    const parentId = (id <= 2 || id < count * 0.1) ? null : randomElem(result).id
+    const custom = Math.random()
+    result.push({ id: String(id), parentId, custom: String(custom) })
+  }
+
+  // return shuffled result
+  return shuffle(result)
+}
+
+const input = generateRandomInputs(1000)
+
 // oUnflatten expects parentId 0 for root and a sorted input
 const oUnflattenInput = input.map(replaceParentIdNullWith0).sort(compareParentId)
+// console.log('oUnflattenInput')
+// console.log(JSON.stringify(oUnflattenInput, undefined, 2))
 
-const expectedOutput = [
-  { data: { id: "99", parentId: null, custom: "and" }, children: [] },
-  {
-    data: { id: "4", parentId: null, custom: "abc" }, children: [
-      { data: { id: "100", parentId: "4", custom: "exciting" }, children: [] },
-      { data: { id: "91", parentId: "4", custom: "with" }, children: [] },
-      {
-        data: { id: "31", parentId: "4", custom: "12" }, children: [
-          {
-            data: { id: "92", parentId: "31", custom: "small" }, children: [
-              { data: { id: "96", parentId: "92", custom: "a" }, children: [] },
-              { data: { id: "93", parentId: "92", custom: "sample" }, children: [] }
-            ]
-          },
-          { data: { id: "95", parentId: "31", custom: "__" }, children: [] }
-        ]
-      }
-    ]
-  },
-  {
-    data: { id: "1", parentId: null, custom: "ZZZz" }, children: [
-      { data: { id: "97", parentId: "1", custom: "very" }, children: [] },
-      { data: { id: "94", parentId: "1", custom: "_" }, children: [] },
-      {
-        data: { id: "42", parentId: "1", custom: "my" }, children: [
-          { data: { id: "98", parentId: "42", custom: "interesting" }, children: [] },
-          { data: { id: "90", parentId: "42", custom: "comparison" }, children: [] }
-        ]
-      },
-      { data: { id: "89", parentId: "1", custom: "great" }, children: [] }
-    ]
-  },
-  {
-    data: { id: "418", parentId: null, custom: "ü" }, children: [
-      { data: { id: "1941", parentId: "418", custom: "de" }, children: [] }
-    ]
-  }
-]
+const expectedOutput: OutNodeData[] = performantArrayToTree(input as Item[]) as OutNodeData[]
 const arrayToTreeExpectedOutput = expectedOutput.map(outRemoveEmptyChildrenProperty).map(outRemoveDataProperty)
 const oUnflattenExpectedOutput = expectedOutput.map(outReplaceParentIdNullWith0).map(outRemoveDataProperty)
 
@@ -79,7 +53,7 @@ const suite = new Benchmark.Suite()
 suite
   // add tests
   .add('performant-array-to-tree', () => {
-    performantArrayToTreeOutput = performantArrayToTree(input)
+    performantArrayToTreeOutput = performantArrayToTree(input as Item[])
   })
   .add('array-to-tree', () => {
     arrayToTreeOutput = arrayToTree(input, {
