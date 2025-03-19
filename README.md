@@ -9,6 +9,7 @@ Benchmark of the following packages with a randomly generated list of nodes
 
 ## Run
 
+1. Install TypeScript if needed: `npm install typescript -g`
 1. `npm install`
 1. `npm run benchmark`
 
