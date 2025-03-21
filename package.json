@@ -17,6 +17,7 @@
     "benchmark": "^2.1.4",
     "o-unflatten": "^1.1.0",
     "performant-array-to-tree": "^1.1.4",
+    "row-to-tree": "^2.2.0",
     "un-flatten-tree": "^2.0.12"
   }
 }
